@@ -1,15 +1,13 @@
-# dsh-purge · DSH 0.2.1-rc.2 适配版
+# dsh-purge · DSH 0.2.1-rc.2 适配与更新修复版（自用）
 
-> **上游已经停更，这个仓库接着把它跑在 DeepSeek Harness 0.2.1-rc.2 上。**
->
-> 原项目 [YuJunZhiXue/dsh-purge](https://github.com/YuJunZhiXue/dsh-purge) 在 2026-10 挂出「暂时停更」：不发新版、不处理 issue/PR、新版 dsh 也不保证跟上。最后一个正式版是 `v1.1.71`，master 上的 `1.1.72` 从未发版。
->
-> 本仓库以 **1.1.72（master）** 为基座，把 0.2.1-rc.2 上必崩的几处修掉，做成可直接安装的版本。**上游恢复维护后，请优先回到上游。**
+> **说明与上游致谢**：
+> 本仓库为个人自用维护分支，基于 [evilevil/dsh-purge-021rc2](https://github.com/evilevil/dsh-purge-021rc2) 与原作者小杨 [YuJunZhiXue/dsh-purge](https://github.com/YuJunZhiXue/dsh-purge) 构建。
+> 完整保留原版与 0.2.1-rc.2 的全部 23 项红队技能、提示词注入与补丁功能，并重点修复了 Windows 桌面端官方更新时因目录句柄占用导致的 WinError 32 升级失效问题。
 
-- 版本：`1.1.72-dsh021rc2.4`
-- 适配：`@deepseek-ai/dsh` / `dsh-base` **0.2.1-rc.2**（web profile，macOS 实测）
-- 基线：0.2.0-rc.2 仍可用（本版改动对 0.2.0 是向后兼容的）
-- 许可：MIT（原作者 小杨 / YuJunZhiXue，署名见文末）
+- 版本：`1.1.72-dsh021rc2.5`
+- 适配：`@deepseek-ai/dsh` / `dsh-base` **0.2.1-rc.2**（Windows / macOS）
+- 基线：0.2.0-rc.2 仍可用（本版改动向后兼容）
+- 许可：MIT（上游原作者：小杨 / YuJunZhiXue，0.2.1 适配：evilevil）
 
 ## 为什么需要这一版
 
@@ -35,10 +33,9 @@ registered variables: provider, model
 | **#127 / #106** 应用后一份 `.bak` 都没有，还原/卸载失效 | `HOST_SYNC` 白名单漏 `closeSync` → `hostFs.closeSync` 未定义 → 占位句柄泄漏 → EPERM 静默失败 | 白名单补 `closeSync / fsyncSync / truncateSync / writeSync / futimesSync / utimesSync` |
 | **#121** Ctrl+Enter 插话静默失效 | 1.1.71 的 `#86` 把 `case "steer"` 改成 `followup`，与 `steer()` 的 next-step 冲突 | 1.1.72 已修正为 `agent.steer`；本版在真机确认落盘 |
 | 红队预设注册失败（社区 fork 的修法） | `presets/redteam/agent.cordis.yml` 的 `toolFilter.deny` 列了未注册的 `workflow / ralph`，`tools.restrict()` 直接抛 `unknown global tool` | 移除 `toolFilter`，子代理隔离改由 `maxDepth: 1` 保证 |
+| **Windows 桌面端官方更新失效（WinError 32）** | 升级脚本与 launcher 继承 DSH 安装目录作为当前工作目录（CWD），且仅按进程名结束进程；残留子进程与 WSH 自身持有着安装文件夹句柄，导致更新器重命名目录报共享冲突 32（MoveFileExW 失败） | 1) 脚本与 cmd 启动时强制切换 CWD 至 `%TEMP%`，释放目录占用；2) 扫描并结束所有路径在安装目录下的相关进程；3) spawn 补全 temp 隔离 |
 
-**未处理**：上游 #133（Windows 桌面换包助手杀自己）属 Electron/Windows 路径，macOS 不复现，未改动；上游 #30（system section 过滤影响项目约定）属行为争议，不在适配范围。
-
-## 安装
+## 安装与使用说明
 
 ### 方式一：一键脚本（macOS，web profile）
 

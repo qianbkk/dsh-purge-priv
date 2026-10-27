@@ -1,7 +1,7 @@
 {
   "name": "dsh-purge",
-  "version": "1.1.72-dsh021rc2.4",
-  "description": "DeepSeek Harness 破甲（社区维护版）：以 1.1.72 为基座，适配 DSH 0.2.1-rc.2 —— 修 {{cwd}} 变量崩溃、#40 补丁锚点、#119 未 await、#127 hostFs.closeSync、红队预设 toolFilter 注册失败。",
+  "version": "1.1.72-dsh021rc2.5",
+  "description": "DeepSeek Harness 破甲（自用维护版）：以 evilevil 0.2.1-rc.2 与小杨 1.1.72 为基座，修复官方桌面更新交接 WinError 32 目录占用锁与 CWD 锁定问题，保留全部红队技能与补丁功能。",
   "type": "module",
   "main": "lib/index.js",
   "exports": {
@@ -101,6 +101,10 @@
     {
       "name": "evilevil",
       "url": "https://github.com/evilevil"
+    },
+    {
+      "name": "qianbkk",
+      "url": "https://github.com/qianbkk"
     }
   ]
 }

@@ -7,12 +7,42 @@ if (installDir.length > 3) installDir = installDir.replace(/[\\\/]+$/, '');
 var logPath = __LOG_JSON__;
 var fso = new ActiveXObject('Scripting.FileSystemObject');
 var sh = new ActiveXObject('WScript.Shell');
+try {
+  var tempDir = fso.GetSpecialFolder(2).Path;
+  sh.CurrentDirectory = tempDir;
+} catch (cwdErr) {}
 var wmi = GetObject('winmgmts:\\\\.\\root\\cimv2');
 function z(n) { return (n < 10 ? '0' : '') + n; }
 function stamp() { var d = new Date(); return d.getFullYear() + '-' + z(d.getMonth() + 1) + '-' + z(d.getDate()) + 'T' + z(d.getHours()) + ':' + z(d.getMinutes()) + ':' + z(d.getSeconds()); }
 function log(m) { var f = fso.OpenTextFile(logPath, 8, true); f.WriteLine(stamp() + ' ' + m); f.Close(); }
 function samePath(a, b) { return String(a || '').replace(/\//g, '\\').toLowerCase() === String(b || '').replace(/\//g, '\\').toLowerCase(); }
-function pids() { var out = []; var e = new Enumerator(wmi.ExecQuery("SELECT ProcessId, ExecutablePath FROM Win32_Process WHERE Name = 'DeepSeek Harness.exe'")); for (; !e.atEnd(); e.moveNext()) { var p = e.item(); if (samePath(p.ExecutablePath, exe)) out.push(p.ProcessId); } return out; }
+function isSubPath(p, dir) {
+  if (!p || !dir) return false;
+  var lp = String(p).replace(/\//g, '\\').toLowerCase();
+  var ld = String(dir).replace(/\//g, '\\').toLowerCase();
+  if (ld.charAt(ld.length - 1) !== '\\') ld += '\\';
+  return lp.indexOf(ld) === 0 || samePath(lp, String(dir).replace(/\//g, '\\').toLowerCase());
+}
+function pids() {
+  var out = [];
+  try {
+    var e = new Enumerator(wmi.ExecQuery("SELECT ProcessId, ExecutablePath FROM Win32_Process"));
+    for (; !e.atEnd(); e.moveNext()) {
+      var p = e.item();
+      if (!p || !p.ExecutablePath) continue;
+      if (samePath(p.ExecutablePath, exe) || isSubPath(p.ExecutablePath, installDir)) {
+        if (p.ProcessId !== 0 && p.ProcessId !== 4) out.push(p.ProcessId);
+      }
+    }
+  } catch (err) {
+    var e2 = new Enumerator(wmi.ExecQuery("SELECT ProcessId, ExecutablePath FROM Win32_Process WHERE Name = 'DeepSeek Harness.exe'"));
+    for (; !e2.atEnd(); e2.moveNext()) {
+      var p2 = e2.item();
+      if (samePath(p2.ExecutablePath, exe)) out.push(p2.ProcessId);
+    }
+  }
+  return out;
+}
 function fileSize(fp) { if (!fso.FileExists(fp)) return -1; return fso.GetFile(fp).Size; }
 function fileStamp(fp) { if (!fso.FileExists(fp)) return ''; return String(fso.GetFile(fp).DateLastModified); }
 log('update-begin');
