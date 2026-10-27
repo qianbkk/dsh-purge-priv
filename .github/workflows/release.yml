@@ -29,6 +29,7 @@ jobs:
         run: |
           node test/identity.test.mjs
           node test/patches.test.mjs
+          node test/official-update.test.mjs
 
       - name: Build tarball
         run: |

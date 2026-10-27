@@ -1,3 +1,16 @@
+# dsh-purge `1.1.72-dsh021rc2.6` — DSH 0.2.1-rc.2 适配版
+
+## 1.1.72-dsh021rc2.6
+
+官方桌面更新交接的运行时保护（修 2026-10-28 桌面端启动即 fatal 的根因）：
+
+- **根因**：NSIS 的 `RMDir /r` 会跟随目录 junction —— `myDelete` 只看 `FILE_ATTRIBUTE_DIRECTORY`，从不检查 `FILE_ATTRIBUTE_REPARSE_POINT`（NSIS 3.11 / 3.13 行为一致）。dsh-purge 解包 `app.asar` 到 `resources\app` 之后会建 `resources\app\runtime` → `..\runtime` 的 junction；官方安装器清理旧安装目录时顺着它把 `resources\runtime` 掏空，桌面 Host 随后读 `resources\runtime\office-skills\office\SKILL.md` 报 ENOENT，直接 `DesktopHostFatalError` 起不来。
+- **拆 junction**：交接脚本在跑安装器之前用 `rmdir`（不带 `/s`，只删 reparse point、不碰目标目录）摘掉 `resources\app\runtime` 与 `resources\app.dshpurge-prev\runtime`。
+- **运行时快照 + 回滚**：安装前把 `resources\runtime` 改名挪到安装目录之外的 `<installDir>.runtime-bak`；安装后校验 `primary-runtime\runtime.json` 与 `office-skills\office\SKILL.md` 是否齐全，缺失就回滚快照再启动客户端，并把 `runtimeVersion` 写进更新日志。
+- 新增 `test/official-update.test.mjs`（8 项：ASCII 约束、占位符完整、junction 必须用非递归 `rmdir` 摘除且早于安装器、快照早于安装器、完整性判据、回滚分支、版本写日志）。
+
+---
+
 # dsh-purge `1.1.72-dsh021rc2.4` — DSH 0.2.1-rc.2 适配版
 
 ## 1.1.72-dsh021rc2.4

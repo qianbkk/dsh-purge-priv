@@ -131,6 +131,7 @@ await check("#80 reports na when the injected minimal rows never existed", async
 });
 
 await check("#53 has its own marker and preserves LEGACY_WEB_SURFACE", () => {
+  if (!HAS_HOST) { console.log("  · skip (no DSH host)"); return; }
   const p = patch(53);
   assert.ok(p.markers.includes("[dsh-purge] web surface prohibition removed"), "#53 lacks its own marker");
   const source = fs.readFileSync(pristine(path.join(HOST, "dsh-harness-dev-context/lib/index.js")), "utf8");
