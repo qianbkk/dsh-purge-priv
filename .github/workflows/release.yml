@@ -33,6 +33,7 @@ jobs:
 
       - name: Build tarball
         run: |
+          mkdir -p dist
           VERSION=$(node -p "require('./package.json').version")
           npm pack --pack-destination dist
           cd dist
