@@ -3,12 +3,12 @@
 # Downloads the latest (or pinned) release, verifies SHA256, backs up, installs.
 #
 # Usage:
-#   curl -fsSL https://raw.githubusercontent.com/evilevil/dsh-purge-021rc2/main/scripts/install.sh | sh
-#   PURGE_VERSION=1.1.72-dsh021rc2.1 sh install.sh
+#   curl -fsSL https://raw.githubusercontent.com/qianbkk/dsh-purge-priv/main/scripts/install.sh | sh
+#   PURGE_VERSION=1.1.72-dsh021rc2.5 sh install.sh
 #   DSH_HOME=/custom/.dsh sh install.sh
 set -eu
 
-REPO="evilevil/dsh-purge-021rc2"
+REPO="qianbkk/dsh-purge-priv"
 VERSION="${PURGE_VERSION:-}"
 DSH_HOME="${DSH_HOME:-$HOME/.dsh}"
 DEST="$DSH_HOME/profiles/web/node_modules"

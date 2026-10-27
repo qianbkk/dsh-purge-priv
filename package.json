@@ -56,11 +56,11 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/evilevil/dsh-purge-021rc2.git"
+    "url": "git+https://github.com/qianbkk/dsh-purge-priv.git"
   },
-  "homepage": "https://github.com/evilevil/dsh-purge-021rc2#readme",
+  "homepage": "https://github.com/qianbkk/dsh-purge-priv#readme",
   "bugs": {
-    "url": "https://github.com/evilevil/dsh-purge-021rc2/issues"
+    "url": "https://github.com/qianbkk/dsh-purge-priv/issues"
   },
   "dsh": {
     "bundle": {
@@ -78,9 +78,9 @@
     },
     "install": {
       "preferred": "tarball",
-      "tarball": "https://github.com/evilevil/dsh-purge-021rc2/releases/download/v1.1.72-dsh021rc2.4/dsh-purge-1.1.72-dsh021rc2.4.tgz",
-      "zip": "https://github.com/evilevil/dsh-purge-021rc2/archive/refs/heads/main.zip",
-      "git": "https://github.com/evilevil/dsh-purge-021rc2.git"
+      "tarball": "https://github.com/qianbkk/dsh-purge-priv/releases/download/v1.1.72-dsh021rc2.5/dsh-purge-1.1.72-dsh021rc2.5.tgz",
+      "zip": "https://github.com/qianbkk/dsh-purge-priv/archive/refs/heads/main.zip",
+      "git": "https://github.com/qianbkk/dsh-purge-priv.git"
     }
   },
   "publishConfig": {
