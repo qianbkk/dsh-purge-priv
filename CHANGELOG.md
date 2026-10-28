@@ -1,3 +1,19 @@
+# dsh-purge `1.1.72-dsh021rc2.7` — DSH 0.2.1-rc.2 适配版
+
+## 1.1.72-dsh021rc2.7
+
+桌面端「应用」后重启弹「dsh desktop host stopped」崩溃对话框的根因修复：
+
+- **根因分析**：
+  1. `lib/desktop.js` 的 `officialRestartScript`（WSH JScript 模板）内残留了中文字符注释，导致 Windows 下 WSH 脚本被 `isWshAscii()` 判非 ASCII 而放弃 WSH 模式，回退到了 PowerShell 异步脚本分支。
+  2. PowerShell 脚本冷启动耗时（~600-1000ms），而主进程此前在无 runtime 握手时设置了 1500ms 的主动 `process.exit(0)`；与此同时，仍运行在官方未补丁 `app.asar` 里的 Electron main 监听到了 host 的 `close` 事件（`main.js:3845`），在 PowerShell 杀掉它之前立即弹出了 `dsh desktop host stopped` 的崩溃对话框。
+- **修复措施**：
+  1. 清除 `officialRestartScript` 中的全部非 ASCII 字符，保证 Windows 官方桌面端在应用后优先走纯净原生的 `wscript` 重启引擎（毫秒级响应并安全关闭当前进程）。
+  2. 优化进程退出兜底窗口至 15s，确保在任何极端或回退情况下均由外部独立脚本优先平滑终结 Electron 与 host，杜绝官方壳抢先弹窗。
+  3. `test/official-update.test.mjs` 新增针对 `officialRestartScript` 的 ASCII 约束与 WSH 引擎调度断言（共 9 项全绿）。
+
+---
+
 # dsh-purge `1.1.72-dsh021rc2.6` — DSH 0.2.1-rc.2 适配版
 
 ## 1.1.72-dsh021rc2.6

@@ -13,6 +13,8 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { officialRestartScript, planOfficialRestart } from "../lib/desktop.js";
+import { isWshAscii } from "../lib/official-update.js";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const WSCRIPT = path.join(HERE, "..", "lib", "official-update.wscript");
@@ -91,6 +93,16 @@ await check("the restored runtime version is written to the update log", () => {
   assert.ok(body.includes("function runtimeVersion("), "missing runtimeVersion helper");
   assert.ok(body.includes("log('runtime-restored ' + runtimeVersion(runtimeDir));"),
     "restore does not log the runtime version");
+});
+
+await check("desktop officialRestartScript stays ASCII and plans wscript", () => {
+  const dummyExe = "D:\\APPALL\\DeepSeekHarness\\DeepSeek Harness.exe";
+  const dummyAsar = "D:\\APPALL\\DeepSeekHarness\\resources\\app.asar";
+  const dummyHome = "C:\\Users\\dummy\\.dsh";
+  const script = officialRestartScript(dummyExe, dummyAsar, dummyHome);
+  assert.ok(isWshAscii(script), "officialRestartScript contains non-ASCII characters");
+  const plan = planOfficialRestart({ wshJs: true, scriptAscii: isWshAscii(script) });
+  assert.equal(plan.kind, "wscript", "official restart did not select wscript");
 });
 
 console.log(`\n${passed} official-update checks passed`);

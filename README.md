@@ -4,7 +4,7 @@
 > 本仓库为个人自用维护分支，基于 [evilevil/dsh-purge-021rc2](https://github.com/evilevil/dsh-purge-021rc2) 与原作者小杨 [YuJunZhiXue/dsh-purge](https://github.com/YuJunZhiXue/dsh-purge) 构建。
 > 完整保留原版与 0.2.1-rc.2 的全部 23 项红队技能、提示词注入与补丁功能，并重点修复了 Windows 桌面端官方更新时因目录句柄占用导致的 WinError 32 升级失效问题。
 
-- 版本：`1.1.72-dsh021rc2.6`
+- 版本：`1.1.72-dsh021rc2.7`
 - 适配：`@deepseek-ai/dsh` / `dsh-base` **0.2.1-rc.2 / 0.2.1-rc.3**（Windows / macOS）
 - 基线：0.2.0-rc.2 仍可用（本版改动向后兼容）
 - 许可：MIT（上游原作者：小杨 / YuJunZhiXue，0.2.1 适配：evilevil）
@@ -35,6 +35,7 @@ registered variables: provider, model
 | 红队预设注册失败（社区 fork 的修法） | `presets/redteam/agent.cordis.yml` 的 `toolFilter.deny` 列了未注册的 `workflow / ralph`，`tools.restrict()` 直接抛 `unknown global tool` | 移除 `toolFilter`，子代理隔离改由 `maxDepth: 1` 保证 |
 | **Windows 桌面端官方更新失效（WinError 32）** | 升级脚本与 launcher 继承 DSH 安装目录作为当前工作目录（CWD），且仅按进程名结束进程；残留子进程与 WSH 自身持有着安装文件夹句柄，导致更新器重命名目录报共享冲突 32（MoveFileExW 失败） | 1) 脚本与 cmd 启动时强制切换 CWD 至 `%TEMP%`，释放目录占用；2) 扫描并结束所有路径在安装目录下的相关进程；3) spawn 补全 temp 隔离 |
 | **官方更新后启动报 SKILL.md ENOENT 致命错误** | NSIS 安装器递归清理目录跟随目录 junction（`resources\app\runtime` → `..\runtime`），将官方运行时载荷（office-skills 等）连带清空，导致启动报 `DesktopHostFatalError` | 1) 安装前使用 `rmdir` 拆除 junction（只删符号链接不碰源文件）；2) 安装前将 `resources\runtime` 快照至外部并在安装后校验完整性与自动回滚 |
+| **桌面端应用后重启弹 host stopped 崩溃对话框** | 1) `officialRestartScript` 模板含中文注释导致 `isWshAscii` 校验失败降级为 PowerShell 启动延迟（~600-1000ms）；2) 降级分支下主进程在 1500ms 兜底退出，而官方壳监听到了 host 关闭事件抢先弹窗 | 1) 清理重启脚本模板全部非 ASCII 字符，恢复高效稳定的原生 WSH 调度；2) 延长降级兜底超时至 15s，确保由外部脚本原子级结束 Electron 与 host，杜绝弹窗 |
 
 ## 安装与使用说明
 

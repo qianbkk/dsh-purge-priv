@@ -1,7 +1,7 @@
 {
   "name": "dsh-purge",
-  "version": "1.1.72-dsh021rc2.6",
-  "description": "DeepSeek Harness 破甲（自用维护版）：以 evilevil 0.2.1-rc.2 与小杨 1.1.72 为基座，修复官方桌面更新交接 WinError 32 目录占用锁与 NSIS runtime junction 掏空问题，保留全部红队技能与补丁功能。",
+  "version": "1.1.72-dsh021rc2.7",
+  "description": "DeepSeek Harness 破甲（自用维护版）：以 evilevil 0.2.1-rc.2 与小杨 1.1.72 为基座，修复官方桌面更新交接 WinError 32 目录占用锁与 NSIS runtime junction 掏空问题，修复应用后重启弹 host stopped 崩溃对话框问题，保留全部红队技能与补丁功能。",
   "type": "module",
   "main": "lib/index.js",
   "exports": {
@@ -78,7 +78,7 @@
     },
     "install": {
       "preferred": "tarball",
-      "tarball": "https://github.com/qianbkk/dsh-purge-priv/releases/download/v1.1.72-dsh021rc2.6/dsh-purge-1.1.72-dsh021rc2.6.tgz",
+      "tarball": "https://github.com/qianbkk/dsh-purge-priv/releases/download/v1.1.72-dsh021rc2.7/dsh-purge-1.1.72-dsh021rc2.7.tgz",
       "zip": "https://github.com/qianbkk/dsh-purge-priv/archive/refs/heads/main.zip",
       "git": "https://github.com/qianbkk/dsh-purge-priv.git"
     }
